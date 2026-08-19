@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#25332A">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pantry">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Pantry — home supplies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Arabic:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root, [data-theme="pantry"]{
+    --ink:#25332A;
+    --ink-soft:#4A5A4F;
+    --paper:#FBF8F1;
+    --card:#FFFFFF;
+    --shelf:#E7E1D2;
+    --line: rgba(37,51,42,0.12);
+    --line-strong: rgba(37,51,42,0.22);
+    --yolk:#E8A33D;
+    --yolk-ink:#5C3B0D;
+    --sage:#7C9473;
+    --sage-ink:#2F3E2A;
+    --rust:#C1502E;
+    --rust-ink:#5C210F;
+    --radius:14px;
+    --shadow: 0 1px 2px rgba(37,51,42,0.06), 0 6px 20px rgba(37,51,42,0.06);
+    --swatch-a:#7C9473; --swatch-b:#E8A33D; --swatch-c:#FBF8F1;
+  }
+  [data-theme="midnight"]{
+    --ink:#EDEDE6;
+    --ink-soft:#9AA79C;
+    --paper:#15201A;
+    --card:#1D2B23;
+    --shelf:#24352B;
+    --line: rgba(237,237,230,0.10);
+    --line-strong: rgba(237,237,230,0.20);
+    --yolk:#E8A33D;
+    --yolk-ink:#F6D9A8;
+    --sage:#6FA07E;
+    --sage-ink:#B9E0C4;
+    --rust:#D9714F;
+    --rust-ink:#F5C3AE;
+    --radius:14px;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 20px rgba(0,0,0,0.35);
+    --swatch-a:#1D2B23; --swatch-b:#E8A33D; --swatch-c:#15201A;
+  }
+  [data-theme="terracotta"]{
+    --ink:#4A2C1F;
+    --ink-soft:#8A6350;
+    --paper:#FBF0E6;
+    --card:#FFFDF9;
+    --shelf:#F0DCC8;
+    --line: rgba(74,44,31,0.12);
+    --line-strong: rgba(74,44,31,0.24);
+    --yolk:#D9822B;
+    --yolk-ink:#5C3813;
+    --sage:#8C9A5E;
+    --sage-ink:#3C441F;
+    --rust:#C1502E;
+    --rust-ink:#5C210F;
+    --radius:14px;
+    --shadow: 0 1px 2px rgba(74,44,31,0.06), 0 6px 20px rgba(74,44,31,0.08);
+    --swatch-a:#D9822B; --swatch-b:#C1502E; --swatch-c:#FBF0E6;
+  }
+  [data-theme="citrus"]{
+    --ink:#2C3320;
+    --ink-soft:#5D6B4A;
+    --paper:#FBFBEF;
+    --card:#FFFFFF;
+    --shelf:#EAEFC9;
+    --line: rgba(44,51,32,0.12);
+    --line-strong: rgba(44,51,32,0.22);
+    --yolk:#C9A227;
+    --yolk-ink:#4A3C0D;
+    --sage:#8FB93E;
+    --sage-ink:#33460F;
+    --rust:#E0622E;
+    --rust-ink:#6B2A0E;
+    --radius:14px;
+    --shadow: 0 1px 2px rgba(44,51,32,0.06), 0 6px 20px rgba(44,51,32,0.06);
+    --swatch-a:#8FB93E; --swatch-b:#C9A227; --swatch-c:#FBFBEF;
+  }
+  [data-theme="slate"]{
+    --ink:#232A32;
+    --ink-soft:#5C6873;
+    --paper:#F2F4F6;
+    --card:#FFFFFF;
+    --shelf:#DDE3E8;
+    --line: rgba(35,42,50,0.12);
+    --line-strong: rgba(35,42,50,0.22);
+    --yolk:#C08A2E;
+    --yolk-ink:#503A0E;
+    --sage:#4F7A8C;
+    --sage-ink:#1F3843;
+    --rust:#B0503F;
+    --rust-ink:#4F2016;
+    --radius:14px;
+    --shadow: 0 1px 2px rgba(35,42,50,0.06), 0 6px 20px rgba(35,42,50,0.06);
+    --swatch-a:#4F7A8C; --swatch-b:#C08A2E; --swatch-c:#F2F4F6;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'DM Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:64px;
+    min-height:100vh;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image: linear-gradient(var(--shelf) 1px, transparent 1px);
+    background-size: 100% 130px;
+    background-position: 0 96px;
+    opacity:0.5;
+    pointer-events:none;
+    z-index:0;
+  }
+  .wrap{ position:relative; z-index:1; max-width:640px; margin:0 auto; padding:0 18px; }
+
+  header{ padding:28px 0 14px; }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:34px;
+    margin:6px 0 2px;
+    letter-spacing:-0.01em;
+  }
+  .sub{ color:var(--ink-soft); font-size:14px; margin:0; }
+
+  .bell{
+    width:34px; height:34px; border-radius:50%;
+    border:1px solid var(--line-strong);
+    background:var(--card);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    position:relative;
+    flex-shrink:0;
+  }
+  .bell svg{ width:16px; height:16px; stroke:var(--ink); }
+  .bell .dot{
+    position:absolute; top:6px; right:6px;
+    width:7px; height:7px; border-radius:50%;
+    background:var(--rust);
+    display:none;
+  }
+  .bell.on .dot{ display:block; }
+
+  /* ticket */
+  .ticket{
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    border:1px solid var(--line);
+    padding:18px 20px;
+    margin:16px 0 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  .ticket::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0; width:5px;
+    background:var(--yolk);
+  }
+  .ticket-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+  .ticket-title{ font-family:'Fraunces', serif; font-weight:600; font-size:16px; }
+  .ticket-count{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--ink-soft); }
+  .ticket-empty{ font-size:14px; color:var(--ink-soft); padding:6px 0; }
+  .ticket-list{ display:flex; flex-wrap:wrap; gap:8px; }
+  .ticket-chip{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    padding:5px 10px;
+    border-radius:20px;
+    background:rgba(193,80,46,0.09);
+    color:var(--rust-ink);
+    border:1px solid rgba(193,80,46,0.25);
+  }
+  .ticket-chip.low{
+    background:rgba(232,163,61,0.14);
+    color:var(--yolk-ink);
+    border-color:rgba(232,163,61,0.35);
+  }
+
+  /* category */
+  .cat{ margin-bottom:26px; }
+  .cat-head{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:10px;
+  }
+  .cat-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    letter-spacing:0.08em;
+  }
+  .cat-name{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:19px;
+  }
+  .cat-line{ flex:1; height:1px; background:var(--line); }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  @media (max-width:420px){ .grid{ grid-template-columns:1fr; } }
+
+  .item{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 13px;
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    user-select:none;
+    transition:transform .12s ease, border-color .12s ease;
+    position:relative;
+  }
+  .item:active{ transform:scale(0.98); }
+  .item.out{ border-color:rgba(193,80,46,0.4); }
+  .item.low{ border-color:rgba(232,163,61,0.45); }
+
+  .item-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:6px; }
+  .item-name{ font-size:14.5px; font-weight:500; line-height:1.25; unicode-bidi:plaintext; }
+  .item-name.is-ar{ font-family:'Noto Sans Arabic','DM Sans', sans-serif; }
+  .item-name .ar{ display:block; font-family:'Noto Sans Arabic','DM Sans', sans-serif; font-size:12px; color:var(--ink-soft); font-weight:400; margin-top:1px; unicode-bidi:plaintext; }
+  .item-qty{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
+  .item-right{ display:flex; flex-direction:column; align-items:flex-end; gap:5px; flex-shrink:0; }
+  .del-btn{
+    width:18px; height:18px;
+    border-radius:50%;
+    border:none;
+    background:transparent;
+    color:var(--ink-soft);
+    font-size:13px;
+    line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .del-btn:hover{ background:rgba(193,80,46,0.15); color:var(--rust-ink); }
+  .status-pill{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    padding:3px 8px;
+    border-radius:20px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .status-pill.full{ background:rgba(124,148,115,0.15); color:var(--sage-ink); }
+  .status-pill.out{ background:rgba(193,80,46,0.15); color:var(--rust-ink); }
+
+  .stepper{
+    display:flex; align-items:center; gap:8px;
+    margin-top:8px;
+  }
+  .stepper button{
+    width:24px; height:24px;
+    border-radius:7px;
+    border:1px solid var(--line-strong);
+    background:var(--card);
+    color:var(--ink);
+    font-family:'JetBrains Mono', monospace;
+    font-size:14px;
+    line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .stepper button:hover{ background:var(--shelf); }
+  .stepper .count{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    min-width:0;
+  }
+
+  .add-row{
+    display:flex; gap:8px; margin-top:10px;
+  }
+  .add-row input{
+    flex:1;
+    font-family:'DM Sans', sans-serif;
+    font-size:13.5px;
+    padding:9px 11px;
+    border:1px solid var(--line-strong);
+    border-radius:10px;
+    background:var(--card);
+    color:var(--ink);
+    outline:none;
+  }
+  .add-row input:focus{ border-color:var(--ink-soft); }
+  .add-row select{
+    font-family:'DM Sans', sans-serif;
+    font-size:12.5px;
+    padding:0 8px;
+    border:1px solid var(--line-strong);
+    border-radius:10px;
+    background:var(--card);
+    color:var(--ink);
+    outline:none;
+    max-width:88px;
+  }
+  .add-row select:focus{ border-color:var(--ink-soft); }
+  .add-row button{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    border:1px solid var(--line-strong);
+    background:var(--card);
+    border-radius:10px;
+    padding:0 14px;
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .add-row button:hover{ background:var(--shelf); }
+
+  footer{
+    text-align:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    padding:24px 0 8px;
+  }
+
+  .theme-row{
+    display:flex; gap:8px; margin-top:14px;
+  }
+  .swatch{
+    width:26px; height:26px;
+    border-radius:50%;
+    border:2px solid transparent;
+    cursor:pointer;
+    padding:0;
+    position:relative;
+    flex-shrink:0;
+  }
+  .swatch.active{ border-color:var(--ink); }
+  .swatch::after{
+    content:"";
+    position:absolute; inset:3px;
+    border-radius:50%;
+  }
+
+  .xp-card{
+    display:flex; align-items:center; gap:12px;
+    margin-top:14px;
+    padding:10px 14px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:var(--shadow);
+  }
+  .xp-level{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:15px;
+    color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    width:34px; height:34px;
+    border-radius:50%;
+    background:var(--yolk);
+    color:var(--paper);
+    flex-shrink:0;
+  }
+  .xp-body{ flex:1; min-width:0; }
+  .xp-label{
+    display:flex; justify-content:space-between;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    margin-bottom:5px;
+  }
+  .xp-track{
+    height:6px;
+    border-radius:6px;
+    background:var(--shelf);
+    overflow:hidden;
+  }
+  .xp-fill{
+    height:100%;
+    background:var(--sage);
+    border-radius:6px;
+    transition:width .4s ease;
+  }
+
+  .levelup{
+    position:fixed;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%) scale(0.9);
+    background:var(--card);
+    border:1px solid var(--line-strong);
+    border-radius:16px;
+    box-shadow:0 12px 40px rgba(0,0,0,0.25);
+    padding:26px 32px;
+    text-align:center;
+    z-index:60;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+  }
+  .levelup.show{ opacity:1; transform:translate(-50%,-50%) scale(1); pointer-events:auto; }
+  .levelup .lvl-num{ font-family:'Fraunces', serif; font-weight:600; font-size:40px; color:var(--yolk); }
+  .levelup .lvl-txt{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--ink-soft); margin-top:4px; letter-spacing:0.06em; text-transform:uppercase; }
+
+  .buy-btn{
+    margin-top:8px;
+    width:100%;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    padding:7px 0;
+    border-radius:8px;
+    border:1px solid var(--border-success, rgba(124,148,115,0.4));
+    background:rgba(124,148,115,0.12);
+    color:var(--sage-ink);
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .buy-btn:hover{ background:rgba(124,148,115,0.2); }
+
+  .toast{
+    position:fixed;
+    bottom:20px; left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--ink);
+    color:var(--paper);
+    font-size:13px;
+    padding:10px 18px;
+    border-radius:30px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+    z-index:50;
+    white-space:nowrap;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">
+      <span id="dateLabel">—</span>
+      <div class="bell" id="bellBtn" title="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="dot"></span>
+      </div>
+    </div>
+    <h1>Pantry</h1>
+    <p class="sub">Tap an item to cycle its stock. Restock list updates as you go.</p>
+    <div class="theme-row" id="themeRow"></div>
+    <div class="xp-card">
+      <div class="xp-level" id="xpLevel">1</div>
+      <div class="xp-body">
+        <div class="xp-label"><span id="xpLabel">0 / 100 xp</span><span id="xpStreak"></span></div>
+        <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="ticket">
+    <div class="ticket-head">
+      <span class="ticket-title">Today's restock</span>
+      <span class="ticket-count" id="ticketCount">0 items</span>
+    </div>
+    <div id="ticketBody"><p class="ticket-empty">Everything's stocked. Nice.</p></div>
+  </div>
+
+  <div id="categories"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="levelup" id="levelup">
+  <div class="lvl-num" id="levelupNum">2</div>
+  <div class="lvl-txt">level up</div>
+</div>
+
+<script>
+const CATS = [
+  { id:'cleaning', tag:'01', name:'Cleaning supplies' },
+  { id:'veg', tag:'02', name:'Vegetables' },
+  { id:'fruit', tag:'03', name:'Fruits' },
+  { id:'spices', tag:'04', name:'Spices' },
+  { id:'dressings', tag:'05', name:'Dressings' },
+  { id:'dairy', tag:'06', name:'Dairy' },
+  { id:'bread', tag:'07', name:'Bread' },
+  { id:'drinks', tag:'08', name:'Hot drinks' },
+];
+
+const DEFAULT_ITEMS = [
+  { id:'cln-dish', cat:'cleaning', name:'Dish soap', ar:'', unit:'bottle', count:1 },
+  { id:'cln-det', cat:'cleaning', name:'Laundry detergent', ar:'', unit:'bottle', count:1 },
+  { id:'cln-sponge', cat:'cleaning', name:'Sponges', ar:'', unit:'pcs', count:3 },
+  { id:'cln-trash', cat:'cleaning', name:'Trash bags', ar:'', unit:'roll', count:1 },
+  { id:'cln-floor', cat:'cleaning', name:'Floor cleaner', ar:'', unit:'bottle', count:1 },
+  { id:'cln-glass', cat:'cleaning', name:'Glass cleaner', ar:'', unit:'bottle', count:1 },
+  { id:'cln-matches', cat:'cleaning', name:'Matches', ar:'كبريت', unit:'box', count:1 },
+  { id:'cln-foodbags', cat:'cleaning', name:'Food plastic bags', ar:'كيس بلاستيك للأكل', unit:'pack', count:1 },
+  { id:'cln-scrubber', cat:'cleaning', name:'Dish scrubber', ar:'سلك مواعين', unit:'pcs', count:1 },
+
+  { id:'veg-cucumber', cat:'veg', name:'Cucumber', ar:'خيار', unit:'kg', count:0.5 },
+  { id:'veg-zucchini', cat:'veg', name:'Zucchini', ar:'كوسة', unit:'kg', count:0.5 },
+  { id:'veg-tomato', cat:'veg', name:'Tomatoes', ar:'طماطم', unit:'kg', count:1 },
+
+  { id:'fru-banana', cat:'fruit', name:'Bananas', ar:'موز', unit:'kg', count:1 },
+  { id:'fru-apple', cat:'fruit', name:'Apples', ar:'تفاح', unit:'kg', count:1 },
+  { id:'fru-lemon', cat:'fruit', name:'Lemons', ar:'ليمون', unit:'kg', count:1 },
+
+  { id:'spc-salt', cat:'spices', name:'Salt', ar:'ملح', unit:'pcs', count:1 },
+  { id:'spc-cumin', cat:'spices', name:'Cumin', ar:'كمون', unit:'pcs', count:1 },
+  { id:'spc-lemonsalt', cat:'spices', name:'Lemon salt', ar:'ملح ليمون', unit:'pcs', count:1 },
+  { id:'spc-pepper', cat:'spices', name:'Black pepper', ar:'فلفل أسود', unit:'pcs', count:1 },
+  { id:'spc-bakingpowder', cat:'spices', name:'Baking powder', ar:'بيكنج بودر', unit:'pcs', count:1 },
+
+  { id:'drs-ketchup', cat:'dressings', name:'Ketchup', ar:'', unit:'bottle', count:1 },
+  { id:'drs-mayo', cat:'dressings', name:'Mayonnaise', ar:'', unit:'jar', count:1 },
+  { id:'drs-mustard', cat:'dressings', name:'Mustard', ar:'', unit:'bottle', count:1 },
+
+  { id:'dry-milk', cat:'dairy', name:'Milk — Juhayna', ar:'لبن جهينة', unit:'carton', count:1 },
+  { id:'dry-triangle-cheese', cat:'dairy', name:'Triangle cheese', ar:'علبة جبنة مثلثات', unit:'box', count:1 },
+  { id:'dry-turkish-cheese', cat:'dairy', name:'Turkish cheese (medium)', ar:'جبنة تركي وسط', unit:'1/8 box', count:1 },
+  { id:'dry-yogurt-plain', cat:'dairy', name:'Plain yogurt — Juhayna', ar:'زبادي سادة جهينة', unit:'cup', count:1 },
+  { id:'dry-yogurt-fruit', cat:'dairy', name:'Fruit yogurt (any flavor)', ar:'زبادي فواكه', unit:'cup', count:1 },
+
+  { id:'brd-white', cat:'bread', name:'White bread', ar:'عيش أبيض (فرن)', unit:'pcs', count:20 },
+  { id:'brd-dry', cat:'bread', name:'Dry bread', ar:'عيش ناشف', unit:'pcs', count:10 },
+
+  { id:'drk-lipton', cat:'drinks', name:'Lipton tea bags', ar:'علبة شاي ليبتون ٢٥ فتلة', unit:'box', count:1 },
+  { id:'drk-chamomile', cat:'drinks', name:'Chamomile', ar:'بابونج', unit:'box', count:1 },
+  { id:'drk-anise', cat:'drinks', name:'Anise', ar:'علبة ينسون', unit:'box', count:1 },
+];
+
+const STATUS_LABEL = { full:'In stock', out:'Out' };
+
+const THEMES = [
+  { id:'pantry', name:'Pantry', a:'#7C9473', b:'#E8A33D', c:'#FBF8F1' },
+  { id:'midnight', name:'Midnight', a:'#1D2B23', b:'#E8A33D', c:'#15201A' },
+  { id:'terracotta', name:'Terracotta', a:'#D9822B', b:'#C1502E', c:'#FBF0E6' },
+  { id:'citrus', name:'Citrus', a:'#8FB93E', b:'#C9A227', c:'#FBFBEF' },
+  { id:'slate', name:'Slate', a:'#4F7A8C', b:'#C08A2E', c:'#F2F4F6' },
+];
+
+let items = [];
+let notifiedToday = false;
+let currentTheme = 'pantry';
+let xpState = { xp:0, lastRestockDate:null, restockedToday:[] };
+
+const XP_PER_RESTOCK = 15;
+const XP_ALL_CLEAR_BONUS = 30;
+
+function levelForXp(xp){
+  return Math.floor(xp/100) + 1;
+}
+function xpIntoLevel(xp){
+  return xp % 100;
+}
+
+async function loadXp(){
+  const saved = await storageGet('pantry-xp');
+  if(saved) xpState = { xp:0, lastRestockDate:null, restockedToday:[], ...saved };
+  const today = todayStr();
+  if(xpState.lastRestockDate !== today) xpState.restockedToday = [];
+}
+
+async function saveXp(){
+  await storageSet('pantry-xp', xpState);
+}
+
+function renderXp(){
+  const xp = xpState.xp;
+  const level = levelForXp(xp);
+  const into = xpIntoLevel(xp);
+  document.getElementById('xpLevel').textContent = level;
+  document.getElementById('xpLabel').textContent = `${into} / 100 xp`;
+  document.getElementById('xpFill').style.width = into + '%';
+  const streakEl = document.getElementById('xpStreak');
+  streakEl.textContent = xpState.restockedToday.length ? `+${xpState.restockedToday.length} today` : '';
+}
+
+function showLevelUp(level){
+  const el = document.getElementById('levelup');
+  document.getElementById('levelupNum').textContent = level;
+  el.classList.add('show');
+  setTimeout(()=> el.classList.remove('show'), 1600);
+}
+
+async function awardXp(item){
+  const today = todayStr();
+  if(xpState.lastRestockDate !== today) xpState.restockedToday = [];
+  if(xpState.restockedToday.includes(item.id)) return;
+
+  const prevLevel = levelForXp(xpState.xp);
+  xpState.xp += XP_PER_RESTOCK;
+  xpState.restockedToday.push(item.id);
+  xpState.lastRestockDate = today;
+
+  const stillOut = items.filter(i => i.id !== item.id && i.status === 'out');
+  let bonusMsg = '';
+  if(stillOut.length === 0){
+    xpState.xp += XP_ALL_CLEAR_BONUS;
+    bonusMsg = ` +${XP_ALL_CLEAR_BONUS} all-clear bonus`;
+  }
+
+  const newLevel = levelForXp(xpState.xp);
+  renderXp();
+  await saveXp();
+  showToast(`+${XP_PER_RESTOCK} xp — restocked ${item.name}${bonusMsg}`);
+  if(newLevel > prevLevel) showLevelUp(newLevel);
+}
+
+async function loadTheme(){
+  const saved = await storageGet('pantry-theme');
+  currentTheme = (saved && THEMES.some(t=>t.id===saved)) ? saved : 'pantry';
+  applyTheme(currentTheme);
+}
+
+function applyTheme(id){
+  document.documentElement.setAttribute('data-theme', id);
+  currentTheme = id;
+  renderThemeRow();
+}
+
+function renderThemeRow(){
+  const row = document.getElementById('themeRow');
+  row.innerHTML = THEMES.map(t=>
+    `<button type="button" class="swatch ${t.id===currentTheme?'active':''}" data-theme-id="${t.id}" title="${t.name}" style="background:linear-gradient(135deg, ${t.a} 50%, ${t.b} 50%)" aria-label="${t.name} theme"></button>`
+  ).join('');
+  row.querySelectorAll('.swatch').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.dataset.themeId;
+      applyTheme(id);
+      await storageSet('pantry-theme', id);
+      showToast(THEMES.find(t=>t.id===id).name + ' theme');
+    });
+  });
+}
+
+async function storageGet(key){
+  try{
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : null;
+  }catch(e){ return null; }
+}
+async function storageSet(key, value){
+  try{ localStorage.setItem(key, JSON.stringify(value)); }
+  catch(e){ console.error('storage set failed', key, e); }
+}
+
+function todayStr(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._h);
+  showToast._h = setTimeout(()=> t.classList.remove('show'), 1800);
+}
+
+async function loadItems(){
+  const saved = await storageGet('pantry-items');
+  if(saved && Array.isArray(saved) && saved.length){
+    const savedIds = new Set(saved.map(i=>i.id));
+    const merged = saved.map(migrateItem);
+    DEFAULT_ITEMS.forEach(d=>{ if(!savedIds.has(d.id)) merged.push({...d, status:'full'}); });
+    items = merged;
+    await saveItems();
+  } else {
+    items = DEFAULT_ITEMS.map(d=>({...d, status:'full'}));
+    await storageSet('pantry-items', items);
+  }
+}
+
+function migrateItem(item){
+  const fallback = DEFAULT_ITEMS.find(d=>d.id===item.id);
+  const unit = item.unit || fallback?.unit || 'pcs';
+  let count = item.count;
+  if(typeof count !== 'number' || isNaN(count)){
+    count = fallback?.count ?? 1;
+  }
+  const status = item.status === 'low' ? 'out' : (item.status || 'full');
+  let name = item.name, ar = item.ar;
+  if(name === 'خص' || ar === 'خص'){
+    name = 'Lettuce'; ar = 'خس';
+  }
+  return { ...item, name, ar, unit, count, status };
+}
+
+async function saveItems(){
+  await storageSet('pantry-items', items);
+}
+
+function toggleStatus(item){
+  item.status = item.status === 'out' ? 'full' : 'out';
+}
+
+function fmtCount(n){
+  if(typeof n !== 'number' || isNaN(n)) return '0';
+  return Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
+}
+
+function render(){
+  const dateLabel = document.getElementById('dateLabel');
+  dateLabel.textContent = new Date().toLocaleDateString(undefined, { weekday:'long', month:'short', day:'numeric' });
+
+  const catsEl = document.getElementById('categories');
+  catsEl.innerHTML = '';
+
+  CATS.forEach(cat=>{
+    const catItems = items.filter(i=>i.cat===cat.id);
+    const section = document.createElement('div');
+    section.className = 'cat';
+
+    section.innerHTML = `
+      <div class="cat-head">
+        <span class="cat-tag">${cat.tag}</span>
+        <span class="cat-name">${cat.name}</span>
+        <div class="cat-line"></div>
+      </div>
+      <div class="grid" id="grid-${cat.id}"></div>
+      <div class="add-row">
+        <input type="text" placeholder="Add item (English)…" id="input-${cat.id}">
+        <input type="text" placeholder="اسم عربي (اختياري)" id="input-ar-${cat.id}" dir="rtl" style="max-width:130px; font-family:'Noto Sans Arabic','DM Sans',sans-serif;">
+        <select id="unit-${cat.id}">
+          <option value="pcs">pcs</option>
+          <option value="kg">kg</option>
+          <option value="cup">cup</option>
+          <option value="box">box</option>
+          <option value="bottle">bottle</option>
+          <option value="jar">jar</option>
+          <option value="carton">carton</option>
+          <option value="pack">pack</option>
+          <option value="roll">roll</option>
+        </select>
+        <button data-cat="${cat.id}" class="addbtn">Add</button>
+      </div>
+    `;
+    catsEl.appendChild(section);
+
+    const grid = section.querySelector(`#grid-${cat.id}`);
+    catItems.forEach(item=>{
+      const el = document.createElement('div');
+      el.className = `item ${item.status}`;
+      el.innerHTML = `
+        <div class="item-top">
+          <div class="item-name${/[\u0600-\u06FF]/.test(item.name) ? ' is-ar' : ''}">${item.name}${item.ar ? `<span class="ar">${item.ar}</span>` : ''}</div>
+          <div class="item-right">
+            <button type="button" class="del-btn" data-act="del" title="Remove item" aria-label="Remove ${item.name}">✕</button>
+            <span class="status-pill ${item.status}">${STATUS_LABEL[item.status]}</span>
+          </div>
+        </div>
+        <div class="stepper">
+          <button type="button" data-act="dec">−</button>
+          <span class="count">${fmtCount(item.count)} ${item.unit}</span>
+          <button type="button" data-act="inc">+</button>
+        </div>
+        ${item.status === 'out' ? `<button type="button" class="buy-btn" data-act="buy">✓ Bought it</button>` : ''}
+      `;
+      el.querySelector('.item-name').addEventListener('click', async ()=>{
+        toggleStatus(item);
+        render();
+        await saveItems();
+        checkAndNotify();
+      });
+      el.querySelector('[data-act="del"]').addEventListener('click', async (e)=>{
+        e.stopPropagation();
+        items = items.filter(i => i.id !== item.id);
+        render();
+        await saveItems();
+        showToast('Removed ' + item.name);
+      });
+      const step = item.unit === 'kg' ? 0.5 : 1;
+      el.querySelector('[data-act="dec"]').addEventListener('click', async (e)=>{
+        e.stopPropagation();
+        item.count = Math.max(0, +(item.count - step).toFixed(2));
+        if(item.count === 0) item.status = 'out';
+        render();
+        await saveItems();
+        checkAndNotify();
+      });
+      el.querySelector('[data-act="inc"]').addEventListener('click', async (e)=>{
+        e.stopPropagation();
+        const wasOut = item.status === 'out';
+        item.count = +(item.count + step).toFixed(2);
+        if(item.count > 0) item.status = 'full';
+        render();
+        await saveItems();
+        checkAndNotify();
+        if(wasOut && item.status === 'full') await awardXp(item);
+      });
+      const buyBtn = el.querySelector('[data-act="buy"]');
+      if(buyBtn){
+        buyBtn.addEventListener('click', async (e)=>{
+          e.stopPropagation();
+          item.status = 'full';
+          if(item.count === 0) item.count = step;
+          render();
+          await saveItems();
+          checkAndNotify();
+          await awardXp(item);
+        });
+      }
+      grid.appendChild(el);
+    });
+  });
+
+  catsEl.querySelectorAll('.addbtn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const catId = btn.dataset.cat;
+      const input = document.getElementById(`input-${catId}`);
+      const inputAr = document.getElementById(`input-ar-${catId}`);
+      const unitSel = document.getElementById(`unit-${catId}`);
+      let name = input.value.trim();
+      let ar = inputAr.value.trim();
+      const unit = unitSel.value;
+      if(!name && !ar) return;
+      const arabicRe = /[\u0600-\u06FF]/;
+      if(!name && ar){ name = ar; ar = ''; }
+      else if(name && arabicRe.test(name) && !ar){ ar = name; name = ''; }
+      const startCount = unit === 'kg' ? 0.5 : 1;
+      items.push({ id: 'custom-'+Date.now(), cat:catId, name: name || ar, ar: name ? ar : '', unit, count:startCount, status:'full' });
+      input.value = '';
+      inputAr.value = '';
+      unitSel.value = 'pcs';
+      render();
+      await saveItems();
+      showToast('Added ' + (name || ar));
+    });
+  });
+
+  renderTicket();
+  renderXp();
+}
+
+function renderTicket(){
+  const needed = items.filter(i=>i.status==='out');
+  const body = document.getElementById('ticketBody');
+  const count = document.getElementById('ticketCount');
+  count.textContent = `${needed.length} item${needed.length===1?'':'s'}`;
+  if(!needed.length){
+    body.innerHTML = `<p class="ticket-empty">Everything's stocked. Nice.</p>`;
+    return;
+  }
+  body.innerHTML = `<div class="ticket-list">${needed.map(i=>
+    `<span class="ticket-chip">${i.name}</span>`
+  ).join('')}</div>`;
+}
+
+async function checkAndNotify(){
+  const outItems = items.filter(i=>i.status==='out');
+  updateBellState(outItems.length);
+
+  if(Notification.permission !== 'granted') return;
+  const today = todayStr();
+  const lastNotified = await storageGet('pantry-last-notified');
+  if(lastNotified === today) return;
+  if(outItems.length === 0) return;
+
+  new Notification('Pantry check', {
+    body: `Out of stock: ${outItems.map(i=>i.name).slice(0,4).join(', ')}${outItems.length>4?'…':''}`,
+  });
+  await storageSet('pantry-last-notified', today);
+}
+
+function updateBellState(count){
+  const bell = document.getElementById('bellBtn');
+  if(count > 0) bell.classList.add('on'); else bell.classList.remove('on');
+}
+
+document.getElementById('bellBtn').addEventListener('click', async ()=>{
+  if(!('Notification' in window)){
+    showToast('Notifications not supported here');
+    return;
+  }
+  if(Notification.permission === 'granted'){
+    showToast('Notifications are on');
+    checkAndNotify();
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if(perm === 'granted'){
+    showToast('Notifications on — daily check enabled');
+    checkAndNotify();
+  } else {
+    showToast('Notifications blocked');
+  }
+});
+
+(async function init(){
+  await loadTheme();
+  await loadXp();
+  await loadItems();
+  render();
+  checkAndNotify();
+  setInterval(checkAndNotify, 1000 * 60 * 60);
+})();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
