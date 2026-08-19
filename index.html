@@ -718,51 +718,51 @@ const CATS = [
 ];
 
 const DEFAULT_ITEMS = [
-  { id:'cln-dish', cat:'cleaning', name:'Dish soap', ar:'', unit:'bottle', count:1 },
-  { id:'cln-det', cat:'cleaning', name:'Laundry detergent', ar:'', unit:'bottle', count:1 },
-  { id:'cln-sponge', cat:'cleaning', name:'Sponges', ar:'', unit:'pcs', count:3 },
-  { id:'cln-trash', cat:'cleaning', name:'Trash bags', ar:'', unit:'roll', count:1 },
-  { id:'cln-floor', cat:'cleaning', name:'Floor cleaner', ar:'', unit:'bottle', count:1 },
-  { id:'cln-glass', cat:'cleaning', name:'Glass cleaner', ar:'', unit:'bottle', count:1 },
-  { id:'cln-matches', cat:'cleaning', name:'Matches', ar:'كبريت', unit:'box', count:1 },
-  { id:'cln-foodbags', cat:'cleaning', name:'Food plastic bags', ar:'كيس بلاستيك للأكل', unit:'pack', count:1 },
-  { id:'cln-scrubber', cat:'cleaning', name:'Dish scrubber', ar:'سلك مواعين', unit:'pcs', count:1 },
+  { id:'cln-dish', cat:'cleaning', name:'Dish soap', ar:'', unit:'bottle', count:1, restockQty:1 },
+  { id:'cln-det', cat:'cleaning', name:'Laundry detergent', ar:'', unit:'bottle', count:1, restockQty:1 },
+  { id:'cln-sponge', cat:'cleaning', name:'Sponges', ar:'', unit:'pcs', count:3, restockQty:3 },
+  { id:'cln-trash', cat:'cleaning', name:'Trash bags', ar:'', unit:'roll', count:1, restockQty:1 },
+  { id:'cln-floor', cat:'cleaning', name:'Floor cleaner', ar:'', unit:'bottle', count:1, restockQty:1 },
+  { id:'cln-glass', cat:'cleaning', name:'Glass cleaner', ar:'', unit:'bottle', count:1, restockQty:1 },
+  { id:'cln-matches', cat:'cleaning', name:'Matches', ar:'كبريت', unit:'box', count:1, restockQty:1 },
+  { id:'cln-foodbags', cat:'cleaning', name:'Food plastic bags', ar:'كيس بلاستيك للأكل', unit:'pack', count:1, restockQty:1 },
+  { id:'cln-scrubber', cat:'cleaning', name:'Dish scrubber', ar:'سلك مواعين', unit:'pcs', count:1, restockQty:1 },
 
-  { id:'veg-cucumber', cat:'veg', name:'Cucumber', ar:'خيار', unit:'kg', count:0.5 },
-  { id:'veg-zucchini', cat:'veg', name:'Zucchini', ar:'كوسة', unit:'kg', count:0.5 },
-  { id:'veg-tomato', cat:'veg', name:'Tomatoes', ar:'طماطم', unit:'kg', count:1 },
+  { id:'veg-cucumber', cat:'veg', name:'Cucumber', ar:'خيار', unit:'kg', count:0.5, restockQty:0.5 },
+  { id:'veg-zucchini', cat:'veg', name:'Zucchini', ar:'كوسة', unit:'kg', count:0.5, restockQty:0.5 },
+  { id:'veg-tomato', cat:'veg', name:'Tomatoes', ar:'طماطم', unit:'kg', count:1, restockQty:1 },
 
-  { id:'fru-banana', cat:'fruit', name:'Bananas', ar:'موز', unit:'kg', count:1 },
-  { id:'fru-apple', cat:'fruit', name:'Apples', ar:'تفاح', unit:'kg', count:1 },
-  { id:'fru-lemon', cat:'fruit', name:'Lemons', ar:'ليمون', unit:'kg', count:1 },
+  { id:'fru-banana', cat:'fruit', name:'Bananas', ar:'موز', unit:'kg', count:1, restockQty:1 },
+  { id:'fru-apple', cat:'fruit', name:'Apples', ar:'تفاح', unit:'kg', count:1, restockQty:1 },
+  { id:'fru-lemon', cat:'fruit', name:'Lemons', ar:'ليمون', unit:'kg', count:1, restockQty:1 },
 
-  { id:'spc-salt', cat:'spices', name:'Salt', ar:'ملح', unit:'pcs', count:1 },
-  { id:'spc-cumin', cat:'spices', name:'Cumin', ar:'كمون', unit:'pcs', count:1 },
-  { id:'spc-lemonsalt', cat:'spices', name:'Lemon salt', ar:'ملح ليمون', unit:'pcs', count:1 },
-  { id:'spc-pepper', cat:'spices', name:'Black pepper', ar:'فلفل أسود', unit:'pcs', count:1 },
-  { id:'spc-bakingpowder', cat:'spices', name:'Baking powder', ar:'بيكنج بودر', unit:'pcs', count:1 },
+  { id:'spc-salt', cat:'spices', name:'Salt', ar:'ملح', unit:'pcs', count:1, restockQty:1 },
+  { id:'spc-cumin', cat:'spices', name:'Cumin', ar:'كمون', unit:'pcs', count:1, restockQty:1 },
+  { id:'spc-lemonsalt', cat:'spices', name:'Lemon salt', ar:'ملح ليمون', unit:'pcs', count:1, restockQty:1 },
+  { id:'spc-pepper', cat:'spices', name:'Black pepper', ar:'فلفل أسود', unit:'pcs', count:1, restockQty:1 },
+  { id:'spc-bakingpowder', cat:'spices', name:'Baking powder', ar:'بيكنج بودر', unit:'pcs', count:1, restockQty:1 },
 
-  { id:'drs-ketchup', cat:'dressings', name:'Ketchup', ar:'', unit:'bottle', count:1 },
-  { id:'drs-mayo', cat:'dressings', name:'Mayonnaise', ar:'', unit:'jar', count:1 },
-  { id:'drs-mustard', cat:'dressings', name:'Mustard', ar:'', unit:'bottle', count:1 },
+  { id:'drs-ketchup', cat:'dressings', name:'Ketchup', ar:'', unit:'bottle', count:1, restockQty:1 },
+  { id:'drs-mayo', cat:'dressings', name:'Mayonnaise', ar:'', unit:'jar', count:1, restockQty:1 },
+  { id:'drs-mustard', cat:'dressings', name:'Mustard', ar:'', unit:'bottle', count:1, restockQty:1 },
 
-  { id:'dry-milk', cat:'dairy', name:'Milk — Juhayna', ar:'لبن جهينة', unit:'carton', count:1 },
-  { id:'dry-triangle-cheese', cat:'dairy', name:'Triangle cheese', ar:'علبة جبنة مثلثات', unit:'box', count:1 },
-  { id:'dry-turkish-cheese', cat:'dairy', name:'Turkish cheese (medium)', ar:'جبنة تركي وسط', unit:'1/8 box', count:1 },
-  { id:'dry-yogurt-plain', cat:'dairy', name:'Plain yogurt — Juhayna', ar:'زبادي سادة جهينة', unit:'cup', count:1 },
-  { id:'dry-yogurt-fruit', cat:'dairy', name:'Fruit yogurt (any flavor)', ar:'زبادي فواكه', unit:'cup', count:1 },
+  { id:'dry-milk', cat:'dairy', name:'Milk — Juhayna', ar:'لبن جهينة', unit:'carton', count:1, restockQty:1 },
+  { id:'dry-triangle-cheese', cat:'dairy', name:'Triangle cheese', ar:'علبة جبنة مثلثات', unit:'box', count:1, restockQty:1 },
+  { id:'dry-turkish-cheese', cat:'dairy', name:'Turkish cheese (medium)', ar:'جبنة تركي وسط', unit:'1/8 box', count:1, restockQty:1 },
+  { id:'dry-yogurt-plain', cat:'dairy', name:'Plain yogurt — Juhayna', ar:'زبادي سادة جهينة', unit:'cup', count:1, restockQty:1 },
+  { id:'dry-yogurt-fruit', cat:'dairy', name:'Fruit yogurt (any flavor)', ar:'زبادي فواكه', unit:'cup', count:1, restockQty:1 },
 
-  { id:'brd-white', cat:'bread', name:'White bread', ar:'عيش أبيض (فرن)', unit:'pcs', count:20 },
-  { id:'brd-dry', cat:'bread', name:'Dry bread', ar:'عيش ناشف', unit:'pcs', count:10 },
+  { id:'brd-white', cat:'bread', name:'White bread', ar:'عيش أبيض (فرن)', unit:'pcs', count:20, restockQty:20 },
+  { id:'brd-dry', cat:'bread', name:'Dry bread', ar:'عيش ناشف', unit:'pcs', count:10, restockQty:10 },
 
-  { id:'drk-lipton', cat:'drinks', name:'Lipton tea bags', ar:'علبة شاي ليبتون ٢٥ فتلة', unit:'box', count:1 },
-  { id:'drk-chamomile', cat:'drinks', name:'Chamomile', ar:'بابونج', unit:'box', count:1 },
-  { id:'drk-anise', cat:'drinks', name:'Anise', ar:'علبة ينسون', unit:'box', count:1 },
+  { id:'drk-lipton', cat:'drinks', name:'Lipton tea bags', ar:'علبة شاي ليبتون ٢٥ فتلة', unit:'box', count:1, restockQty:1 },
+  { id:'drk-chamomile', cat:'drinks', name:'Chamomile', ar:'بابونج', unit:'box', count:1, restockQty:1 },
+  { id:'drk-anise', cat:'drinks', name:'Anise', ar:'علبة ينسون', unit:'box', count:1, restockQty:1 },
 
-  { id:'prt-eggs', cat:'protein', name:'Eggs', ar:'بيض', unit:'pcs', count:30 },
-  { id:'prt-chicken', cat:'protein', name:'Chicken', ar:'فراخ', unit:'kg', count:1 },
-  { id:'prt-minced', cat:'protein', name:'Minced meat', ar:'لحمة مفرومة', unit:'kg', count:1 },
-  { id:'prt-beef', cat:'protein', name:'Beef', ar:'لحمة بقري', unit:'kg', count:1 },
+  { id:'prt-eggs', cat:'protein', name:'Eggs', ar:'بيض', unit:'pcs', count:30, restockQty:30 },
+  { id:'prt-chicken', cat:'protein', name:'Chicken', ar:'فراخ', unit:'kg', count:1, restockQty:1 },
+  { id:'prt-minced', cat:'protein', name:'Minced meat', ar:'لحمة مفرومة', unit:'kg', count:1, restockQty:1 },
+  { id:'prt-beef', cat:'protein', name:'Beef', ar:'لحمة بقري', unit:'kg', count:1, restockQty:1 },
 ];
 
 const STATUS_LABEL = { full:'In stock', out:'Out', not_needed:'Not needed' };
@@ -949,12 +949,16 @@ function migrateItem(item){
   if(typeof count !== 'number' || isNaN(count)){
     count = fallback?.count ?? 1;
   }
+  let restockQty = item.restockQty;
+  if(typeof restockQty !== 'number' || isNaN(restockQty) || restockQty <= 0){
+    restockQty = fallback?.restockQty ?? (count > 0 ? count : (unit === 'kg' ? 0.5 : 1));
+  }
   const status = item.status === 'low' ? 'out' : (item.status || 'full');
   let name = item.name, ar = item.ar;
   if(name === 'خص' || ar === 'خص'){
     name = 'Lettuce'; ar = 'خس';
   }
-  return { ...item, name, ar, unit, count, status };
+  return { ...item, name, ar, unit, count, restockQty, status };
 }
 
 async function saveItems(){
@@ -1063,6 +1067,7 @@ function render(){
         const wasOut = item.status === 'out';
         item.count = +(item.count + step).toFixed(2);
         if(item.count > 0) item.status = 'full';
+        if(wasOut && item.status === 'full') item.restockQty = item.count;
         render();
         await saveItems();
         checkAndNotify();
@@ -1087,6 +1092,7 @@ function render(){
           priceEntryId = null;
           item.status = 'full';
           if(item.count === 0) item.count = step;
+          item.restockQty = item.count;
           await saveItems();
           checkAndNotify();
           await awardXp(item, price);
@@ -1099,6 +1105,7 @@ function render(){
           priceEntryId = null;
           item.status = 'full';
           if(item.count === 0) item.count = step;
+          item.restockQty = item.count;
           await saveItems();
           checkAndNotify();
           await awardXp(item, null);
@@ -1122,7 +1129,7 @@ function render(){
       if(!name && ar){ name = ar; ar = ''; }
       else if(name && arabicRe.test(name) && !ar){ ar = name; name = ''; }
       const startCount = unit === 'kg' ? 0.5 : 1;
-      items.push({ id: 'custom-'+Date.now(), cat:catId, name: name || ar, ar: name ? ar : '', unit, count:startCount, status:'full' });
+      items.push({ id: 'custom-'+Date.now(), cat:catId, name: name || ar, ar: name ? ar : '', unit, count:startCount, restockQty:startCount, status:'full' });
       input.value = '';
       inputAr.value = '';
       unitSel.value = 'pcs';
@@ -1146,7 +1153,7 @@ function renderTicket(){
     return;
   }
   body.innerHTML = `<div class="ticket-list">${needed.map(i=>
-    `<span class="ticket-chip">${i.name}</span>`
+    `<span class="ticket-chip">${i.name} · ${fmtCount(i.restockQty || (i.unit==='kg'?0.5:1))} ${i.unit}</span>`
   ).join('')}</div>`;
 }
 
