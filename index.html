@@ -439,6 +439,96 @@
   }
   .buy-btn:hover{ background:rgba(124,148,115,0.2); }
 
+  .icon-btn{
+    width:34px; height:34px; border-radius:50%;
+    border:1px solid var(--line-strong);
+    background:var(--card);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+    font-size:15px;
+  }
+  .icon-btn svg{ width:16px; height:16px; stroke:var(--ink); }
+  .icon-row{ display:flex; gap:8px; }
+
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(20,20,15,0.45);
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    z-index:70;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal-panel{
+    background:var(--paper);
+    width:100%; max-width:640px;
+    max-height:78vh;
+    overflow-y:auto;
+    border-radius:20px 20px 0 0;
+    padding:20px 20px 28px;
+    box-shadow:0 -8px 30px rgba(0,0,0,0.2);
+  }
+  .modal-head{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:14px;
+  }
+  .modal-title{ font-family:'Fraunces', serif; font-weight:600; font-size:19px; }
+  .modal-close{
+    width:28px; height:28px; border-radius:50%;
+    border:1px solid var(--line-strong);
+    background:var(--card);
+    cursor:pointer;
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+
+  .hist-day{ margin-bottom:16px; }
+  .hist-day-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-bottom:6px;
+  }
+  .hist-row{
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:9px 12px;
+    margin-bottom:6px;
+    font-size:13.5px;
+  }
+  .hist-row .hist-time{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+  .hist-empty{ color:var(--ink-soft); font-size:14px; padding:10px 0; }
+
+  .settings-item{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .settings-item:last-child{ border-bottom:none; }
+  .settings-label{ font-size:14.5px; font-weight:500; }
+  .settings-sub{ font-size:12.5px; color:var(--ink-soft); margin-top:2px; }
+  .danger-btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    padding:8px 14px;
+    border-radius:10px;
+    border:1px solid rgba(193,80,46,0.4);
+    background:rgba(193,80,46,0.1);
+    color:var(--rust-ink);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .danger-btn:hover{ background:rgba(193,80,46,0.18); }
+
   .toast{
     position:fixed;
     bottom:20px; left:50%;
@@ -463,9 +553,17 @@
   <header>
     <div class="eyebrow">
       <span id="dateLabel">—</span>
-      <div class="bell" id="bellBtn" title="Notifications">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <span class="dot"></span>
+      <div class="icon-row">
+        <div class="icon-btn" id="historyBtn" title="History">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3 3"/></svg>
+        </div>
+        <div class="icon-btn" id="settingsBtn" title="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+        <div class="bell" id="bellBtn" title="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="dot"></span>
+        </div>
       </div>
     </div>
     <h1>Pantry</h1>
@@ -496,6 +594,39 @@
 <div class="levelup" id="levelup">
   <div class="lvl-num" id="levelupNum">2</div>
   <div class="lvl-txt">level up</div>
+</div>
+
+<div class="modal-overlay" id="historyOverlay">
+  <div class="modal-panel">
+    <div class="modal-head">
+      <span class="modal-title">Purchase history</span>
+      <button type="button" class="modal-close" id="historyClose">✕</button>
+    </div>
+    <div id="historyBody"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="settingsOverlay">
+  <div class="modal-panel">
+    <div class="modal-head">
+      <span class="modal-title">Settings</span>
+      <button type="button" class="modal-close" id="settingsClose">✕</button>
+    </div>
+    <div class="settings-item">
+      <div>
+        <div class="settings-label">Reset XP progress</div>
+        <div class="settings-sub">Sets your level and XP back to zero. Item data is kept.</div>
+      </div>
+      <button type="button" class="danger-btn" id="resetXpBtn">Reset</button>
+    </div>
+    <div class="settings-item">
+      <div>
+        <div class="settings-label">Clear purchase history</div>
+        <div class="settings-sub">Removes the restock log. Doesn't affect XP or items.</div>
+      </div>
+      <button type="button" class="danger-btn" id="clearHistoryBtn">Clear</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -567,6 +698,26 @@ let items = [];
 let notifiedToday = false;
 let currentTheme = 'pantry';
 let xpState = { xp:0, lastRestockDate:null, restockedToday:[] };
+let history = [];
+
+async function loadHistory(){
+  const saved = await storageGet('pantry-history');
+  history = Array.isArray(saved) ? saved : [];
+}
+async function saveHistory(){
+  await storageSet('pantry-history', history);
+}
+function logPurchase(item){
+  const now = new Date();
+  history.unshift({
+    id: 'h-'+Date.now(),
+    name: item.name,
+    ar: item.ar || '',
+    date: todayStr(),
+    time: now.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' })
+  });
+  if(history.length > 300) history = history.slice(0, 300);
+}
 
 const XP_PER_RESTOCK = 15;
 const XP_ALL_CLEAR_BONUS = 30;
@@ -625,8 +776,10 @@ async function awardXp(item){
   }
 
   const newLevel = levelForXp(xpState.xp);
+  logPurchase(item);
   renderXp();
   await saveXp();
+  await saveHistory();
   showToast(`+${XP_PER_RESTOCK} xp — restocked ${item.name}${bonusMsg}`);
   if(newLevel > prevLevel) showLevelUp(newLevel);
 }
@@ -911,9 +1064,65 @@ document.getElementById('bellBtn').addEventListener('click', async ()=>{
   }
 });
 
+function renderHistory(){
+  const body = document.getElementById('historyBody');
+  if(!history.length){
+    body.innerHTML = `<p class="hist-empty">No restocks logged yet. Buy something and hit "Bought it".</p>`;
+    return;
+  }
+  const groups = {};
+  history.forEach(h=>{
+    if(!groups[h.date]) groups[h.date] = [];
+    groups[h.date].push(h);
+  });
+  const dates = Object.keys(groups).sort((a,b)=> b.localeCompare(a));
+  body.innerHTML = dates.map(date=>{
+    const label = date === todayStr() ? 'Today' : new Date(date).toLocaleDateString(undefined, { weekday:'long', month:'short', day:'numeric' });
+    const rows = groups[date].map(h=>
+      `<div class="hist-row"><span>${h.name}${h.ar ? ' · '+h.ar : ''}</span><span class="hist-time">${h.time}</span></div>`
+    ).join('');
+    return `<div class="hist-day"><div class="hist-day-label">${label}</div>${rows}</div>`;
+  }).join('');
+}
+
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+
+document.getElementById('historyBtn').addEventListener('click', ()=>{
+  renderHistory();
+  openModal('historyOverlay');
+});
+document.getElementById('historyClose').addEventListener('click', ()=> closeModal('historyOverlay'));
+document.getElementById('historyOverlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'historyOverlay') closeModal('historyOverlay');
+});
+
+document.getElementById('settingsBtn').addEventListener('click', ()=> openModal('settingsOverlay'));
+document.getElementById('settingsClose').addEventListener('click', ()=> closeModal('settingsOverlay'));
+document.getElementById('settingsOverlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'settingsOverlay') closeModal('settingsOverlay');
+});
+
+document.getElementById('resetXpBtn').addEventListener('click', async ()=>{
+  if(!confirm('Reset your level and XP back to zero?')) return;
+  xpState = { xp:0, lastRestockDate:null, restockedToday:[] };
+  await saveXp();
+  renderXp();
+  showToast('XP progress reset');
+});
+
+document.getElementById('clearHistoryBtn').addEventListener('click', async ()=>{
+  if(!confirm('Clear all purchase history?')) return;
+  history = [];
+  await saveHistory();
+  renderHistory();
+  showToast('History cleared');
+});
+
 (async function init(){
   await loadTheme();
   await loadXp();
+  await loadHistory();
   await loadItems();
   render();
   checkAndNotify();
