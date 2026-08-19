@@ -236,7 +236,7 @@
   }
   .item:active{ transform:scale(0.98); }
   .item.out{ border-color:rgba(193,80,46,0.4); }
-  .item.low{ border-color:rgba(232,163,61,0.45); }
+  .item.not_needed{ opacity:0.6; }
 
   .item-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:6px; }
   .item-name{ font-size:14.5px; font-weight:500; line-height:1.25; unicode-bidi:plaintext; }
@@ -271,6 +271,7 @@
   }
   .status-pill.full{ background:rgba(124,148,115,0.15); color:var(--sage-ink); }
   .status-pill.out{ background:rgba(193,80,46,0.15); color:var(--rust-ink); }
+  .status-pill.not_needed{ background:rgba(120,120,110,0.15); color:var(--ink-soft); }
 
   .stepper{
     display:flex; align-items:center; gap:8px;
@@ -438,6 +439,76 @@
     display:flex; align-items:center; justify-content:center; gap:6px;
   }
   .buy-btn:hover{ background:rgba(124,148,115,0.2); }
+
+  .buy-row{
+    display:flex; gap:6px; margin-top:8px;
+  }
+  .buy-row input{
+    flex:1; min-width:0;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    padding:7px 9px;
+    border:1px solid var(--line-strong);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--ink);
+    outline:none;
+  }
+  .buy-row input:focus{ border-color:var(--ink-soft); }
+  .buy-row button{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    padding:0 12px;
+    border-radius:8px;
+    border:1px solid rgba(124,148,115,0.4);
+    background:rgba(124,148,115,0.12);
+    color:var(--sage-ink);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .buy-row button:hover{ background:rgba(124,148,115,0.2); }
+
+  .price-row{
+    margin-top:8px;
+    display:flex; gap:6px;
+  }
+  .price-row input{
+    flex:1;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    padding:7px 9px;
+    border:1px solid var(--line-strong);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--ink);
+    outline:none;
+    min-width:0;
+  }
+  .price-row input:focus{ border-color:var(--ink-soft); }
+  .price-row button{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    border-radius:8px;
+    padding:0 10px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .price-row .confirm-btn{
+    border:1px solid rgba(124,148,115,0.4);
+    background:rgba(124,148,115,0.14);
+    color:var(--sage-ink);
+  }
+  .price-row .skip-btn{
+    border:1px solid var(--line-strong);
+    background:var(--card);
+    color:var(--ink-soft);
+  }
+  .item-price{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:4px;
+  }
 
   .icon-btn{
     width:34px; height:34px; border-radius:50%;
@@ -639,6 +710,7 @@ const CATS = [
   { id:'dairy', tag:'06', name:'Dairy' },
   { id:'bread', tag:'07', name:'Bread' },
   { id:'drinks', tag:'08', name:'Hot drinks' },
+  { id:'protein', tag:'09', name:'Eggs & meat' },
 ];
 
 const DEFAULT_ITEMS = [
@@ -682,9 +754,15 @@ const DEFAULT_ITEMS = [
   { id:'drk-lipton', cat:'drinks', name:'Lipton tea bags', ar:'علبة شاي ليبتون ٢٥ فتلة', unit:'box', count:1 },
   { id:'drk-chamomile', cat:'drinks', name:'Chamomile', ar:'بابونج', unit:'box', count:1 },
   { id:'drk-anise', cat:'drinks', name:'Anise', ar:'علبة ينسون', unit:'box', count:1 },
+
+  { id:'prt-eggs', cat:'protein', name:'Eggs', ar:'بيض', unit:'pcs', count:30 },
+  { id:'prt-chicken', cat:'protein', name:'Chicken', ar:'فراخ', unit:'kg', count:1 },
+  { id:'prt-minced', cat:'protein', name:'Minced meat', ar:'لحمة مفرومة', unit:'kg', count:1 },
+  { id:'prt-beef', cat:'protein', name:'Beef', ar:'لحمة بقري', unit:'kg', count:1 },
 ];
 
-const STATUS_LABEL = { full:'In stock', out:'Out' };
+const STATUS_LABEL = { full:'In stock', out:'Out', not_needed:'Not needed' };
+const STATUS_CYCLE = ['full','not_needed','out'];
 
 const THEMES = [
   { id:'pantry', name:'Pantry', a:'#7C9473', b:'#E8A33D', c:'#FBF8F1' },
@@ -699,6 +777,7 @@ let notifiedToday = false;
 let currentTheme = 'pantry';
 let xpState = { xp:0, lastRestockDate:null, restockedToday:[] };
 let history = [];
+let priceEntryId = null;
 
 async function loadHistory(){
   const saved = await storageGet('pantry-history');
@@ -707,12 +786,13 @@ async function loadHistory(){
 async function saveHistory(){
   await storageSet('pantry-history', history);
 }
-function logPurchase(item){
+function logPurchase(item, price){
   const now = new Date();
   history.unshift({
     id: 'h-'+Date.now(),
     name: item.name,
     ar: item.ar || '',
+    price: (typeof price === 'number' && !isNaN(price)) ? price : null,
     date: todayStr(),
     time: now.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' })
   });
@@ -721,6 +801,7 @@ function logPurchase(item){
 
 const XP_PER_RESTOCK = 15;
 const XP_ALL_CLEAR_BONUS = 30;
+const XP_PRICE_BONUS = 10;
 
 function levelForXp(xp){
   return Math.floor(xp/100) + 1;
@@ -758,7 +839,7 @@ function showLevelUp(level){
   setTimeout(()=> el.classList.remove('show'), 1600);
 }
 
-async function awardXp(item){
+async function awardXp(item, price){
   const today = todayStr();
   if(xpState.lastRestockDate !== today) xpState.restockedToday = [];
   if(xpState.restockedToday.includes(item.id)) return;
@@ -768,18 +849,26 @@ async function awardXp(item){
   xpState.restockedToday.push(item.id);
   xpState.lastRestockDate = today;
 
-  const stillOut = items.filter(i => i.id !== item.id && i.status === 'out');
   let bonusMsg = '';
+  const hasPrice = typeof price === 'number' && !isNaN(price) && price > 0;
+  if(hasPrice){
+    xpState.xp += XP_PRICE_BONUS;
+    bonusMsg += ` +${XP_PRICE_BONUS} price logged`;
+    item.lastPrice = price;
+  }
+
+  const stillOut = items.filter(i => i.id !== item.id && i.status === 'out');
   if(stillOut.length === 0){
     xpState.xp += XP_ALL_CLEAR_BONUS;
-    bonusMsg = ` +${XP_ALL_CLEAR_BONUS} all-clear bonus`;
+    bonusMsg += ` +${XP_ALL_CLEAR_BONUS} all-clear bonus`;
   }
 
   const newLevel = levelForXp(xpState.xp);
-  logPurchase(item);
-  renderXp();
+  logPurchase(item, hasPrice ? price : null);
+  render();
   await saveXp();
   await saveHistory();
+  await saveItems();
   showToast(`+${XP_PER_RESTOCK} xp — restocked ${item.name}${bonusMsg}`);
   if(newLevel > prevLevel) showLevelUp(newLevel);
 }
@@ -869,7 +958,8 @@ async function saveItems(){
 }
 
 function toggleStatus(item){
-  item.status = item.status === 'out' ? 'full' : 'out';
+  const idx = STATUS_CYCLE.indexOf(item.status);
+  item.status = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
 }
 
 function fmtCount(n){
@@ -919,6 +1009,7 @@ function render(){
     catItems.forEach(item=>{
       const el = document.createElement('div');
       el.className = `item ${item.status}`;
+      const showPriceRow = priceEntryId === item.id;
       el.innerHTML = `
         <div class="item-top">
           <div class="item-name${/[\u0600-\u06FF]/.test(item.name) ? ' is-ar' : ''}">${item.name}${item.ar ? `<span class="ar">${item.ar}</span>` : ''}</div>
@@ -932,7 +1023,14 @@ function render(){
           <span class="count">${fmtCount(item.count)} ${item.unit}</span>
           <button type="button" data-act="inc">+</button>
         </div>
-        ${item.status === 'out' ? `<button type="button" class="buy-btn" data-act="buy">✓ Bought it</button>` : ''}
+        ${item.lastPrice ? `<div class="item-price">last: ${item.lastPrice} EGP</div>` : ''}
+        ${item.status === 'out' && !showPriceRow ? `<button type="button" class="buy-btn" data-act="buy">✓ Bought it</button>` : ''}
+        ${showPriceRow ? `
+          <div class="price-row">
+            <input type="number" inputmode="decimal" min="0" step="0.25" placeholder="Price (optional)" id="price-${item.id}">
+            <button type="button" class="confirm-btn" data-act="confirmbuy">Confirm</button>
+            <button type="button" class="skip-btn" data-act="skipbuy">Skip</button>
+          </div>` : ''}
       `;
       el.querySelector('.item-name').addEventListener('click', async ()=>{
         toggleStatus(item);
@@ -968,14 +1066,38 @@ function render(){
       });
       const buyBtn = el.querySelector('[data-act="buy"]');
       if(buyBtn){
-        buyBtn.addEventListener('click', async (e)=>{
+        buyBtn.addEventListener('click', (e)=>{
           e.stopPropagation();
+          priceEntryId = item.id;
+          render();
+          document.getElementById(`price-${item.id}`)?.focus();
+        });
+      }
+      const confirmBtn = el.querySelector('[data-act="confirmbuy"]');
+      if(confirmBtn){
+        confirmBtn.addEventListener('click', async (e)=>{
+          e.stopPropagation();
+          const input = document.getElementById(`price-${item.id}`);
+          const raw = input.value.trim();
+          const price = raw === '' ? null : parseFloat(raw);
+          priceEntryId = null;
           item.status = 'full';
           if(item.count === 0) item.count = step;
-          render();
           await saveItems();
           checkAndNotify();
-          await awardXp(item);
+          await awardXp(item, price);
+        });
+      }
+      const skipBtn = el.querySelector('[data-act="skipbuy"]');
+      if(skipBtn){
+        skipBtn.addEventListener('click', async (e)=>{
+          e.stopPropagation();
+          priceEntryId = null;
+          item.status = 'full';
+          if(item.count === 0) item.count = step;
+          await saveItems();
+          checkAndNotify();
+          await awardXp(item, null);
         });
       }
       grid.appendChild(el);
@@ -1076,12 +1198,15 @@ function renderHistory(){
     groups[h.date].push(h);
   });
   const dates = Object.keys(groups).sort((a,b)=> b.localeCompare(a));
-  body.innerHTML = dates.map(date=>{
+  const grandTotal = history.reduce((sum,h)=> sum + (typeof h.price === 'number' ? h.price : 0), 0);
+  const totalLine = grandTotal > 0 ? `<div class="hist-day-label" style="margin-bottom:12px;">Total logged spend: ${grandTotal.toFixed(2)} EGP</div>` : '';
+  body.innerHTML = totalLine + dates.map(date=>{
     const label = date === todayStr() ? 'Today' : new Date(date).toLocaleDateString(undefined, { weekday:'long', month:'short', day:'numeric' });
+    const dayTotal = groups[date].reduce((sum,h)=> sum + (typeof h.price === 'number' ? h.price : 0), 0);
     const rows = groups[date].map(h=>
-      `<div class="hist-row"><span>${h.name}${h.ar ? ' · '+h.ar : ''}</span><span class="hist-time">${h.time}</span></div>`
+      `<div class="hist-row"><span>${h.name}${h.ar ? ' · '+h.ar : ''}</span><span class="hist-time">${typeof h.price === 'number' ? h.price.toFixed(2)+' EGP · ' : ''}${h.time}</span></div>`
     ).join('');
-    return `<div class="hist-day"><div class="hist-day-label">${label}</div>${rows}</div>`;
+    return `<div class="hist-day"><div class="hist-day-label">${label}${dayTotal > 0 ? ' · '+dayTotal.toFixed(2)+' EGP' : ''}</div>${rows}</div>`;
   }).join('');
 }
 
