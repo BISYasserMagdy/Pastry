@@ -261,6 +261,46 @@
     display:flex; align-items:center; justify-content:center;
   }
   .del-btn:hover{ background:rgba(193,80,46,0.15); color:var(--rust-ink); }
+
+  .note-btn{
+    width:18px; height:18px;
+    border-radius:50%;
+    border:none;
+    background:transparent;
+    color:var(--ink-soft);
+    font-size:12px;
+    line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .note-btn.has-note{ color:var(--yolk-ink); }
+  .note-btn:hover{ background:rgba(232,163,61,0.18); }
+  .note-text{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:7px;
+    padding:6px 8px;
+    background:var(--shelf);
+    border-radius:7px;
+    line-height:1.35;
+    unicode-bidi:plaintext;
+  }
+  .note-input{
+    width:100%;
+    margin-top:7px;
+    font-family:'DM Sans', sans-serif;
+    font-size:12.5px;
+    padding:7px 9px;
+    border:1px solid var(--line-strong);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--ink);
+    outline:none;
+    resize:none;
+    box-sizing:border-box;
+  }
+  .note-input:focus{ border-color:var(--ink-soft); }
+
   .status-pill{
     font-family:'JetBrains Mono', monospace;
     font-size:10px;
@@ -715,6 +755,8 @@ const CATS = [
   { id:'bread', tag:'07', name:'Bread' },
   { id:'drinks', tag:'08', name:'Hot drinks' },
   { id:'protein', tag:'09', name:'Eggs & meat' },
+  { id:'oils', tag:'10', name:'Oils' },
+  { id:'colddrinks', tag:'11', name:'Cold drinks' },
 ];
 
 const DEFAULT_ITEMS = [
@@ -763,6 +805,13 @@ const DEFAULT_ITEMS = [
   { id:'prt-chicken', cat:'protein', name:'Chicken', ar:'فراخ', unit:'kg', count:1, restockQty:1 },
   { id:'prt-minced', cat:'protein', name:'Minced meat', ar:'لحمة مفرومة', unit:'kg', count:1, restockQty:1 },
   { id:'prt-beef', cat:'protein', name:'Beef', ar:'لحمة بقري', unit:'kg', count:1, restockQty:1 },
+
+  { id:'oil-sunflower', cat:'oils', name:'Sunflower oil', ar:'زيت عباد الشمس', unit:'bottle', count:1, restockQty:1 },
+  { id:'oil-olive', cat:'oils', name:'Olive oil', ar:'زيت زيتون', unit:'bottle', count:1, restockQty:1 },
+
+  { id:'cld-water', cat:'colddrinks', name:'Water bottles', ar:'مياه', unit:'pcs', count:6, restockQty:6 },
+  { id:'cld-juice', cat:'colddrinks', name:'Juice', ar:'عصير', unit:'bottle', count:1, restockQty:1 },
+  { id:'cld-soda', cat:'colddrinks', name:'Soda', ar:'مياه غازية', unit:'bottle', count:1, restockQty:1 },
 ];
 
 const STATUS_LABEL = { full:'In stock', out:'Out', not_needed:'Not needed' };
@@ -782,6 +831,7 @@ let currentTheme = 'pantry';
 let xpState = { xp:0, lastRestockDate:null, restockedToday:[] };
 let history = [];
 let priceEntryId = null;
+let noteEntryId = null;
 
 async function loadHistory(){
   const saved = await storageGet('pantry-history');
@@ -954,11 +1004,12 @@ function migrateItem(item){
     restockQty = fallback?.restockQty ?? (count > 0 ? count : (unit === 'kg' ? 0.5 : 1));
   }
   const status = item.status === 'low' ? 'out' : (item.status || 'full');
+  const note = item.note || '';
   let name = item.name, ar = item.ar;
   if(name === 'خص' || ar === 'خص'){
     name = 'Lettuce'; ar = 'خس';
   }
-  return { ...item, name, ar, unit, count, restockQty, status };
+  return { ...item, name, ar, unit, count, restockQty, status, note };
 }
 
 async function saveItems(){
@@ -1018,11 +1069,13 @@ function render(){
       const el = document.createElement('div');
       el.className = `item ${item.status}`;
       const showPriceRow = priceEntryId === item.id;
+      const showNoteEdit = noteEntryId === item.id;
       el.innerHTML = `
         <div class="item-top">
           <div class="item-name${/[\u0600-\u06FF]/.test(item.name) ? ' is-ar' : ''}">${item.name}${item.ar ? `<span class="ar">${item.ar}</span>` : ''}</div>
           <div class="item-right">
             <button type="button" class="del-btn" data-act="del" title="Remove item" aria-label="Remove ${item.name}">✕</button>
+            <button type="button" class="note-btn ${item.note ? 'has-note' : ''}" data-act="note" title="Note" aria-label="Note for ${item.name}">✎</button>
             <span class="status-pill ${item.status}">${STATUS_LABEL[item.status]}</span>
           </div>
         </div>
@@ -1032,6 +1085,8 @@ function render(){
           <button type="button" data-act="inc">+</button>
         </div>
         ${item.lastPrice ? `<div class="item-price">last: ${item.lastPrice} EGP</div>` : ''}
+        ${item.note && !showNoteEdit ? `<div class="note-text">${item.note}</div>` : ''}
+        ${showNoteEdit ? `<textarea class="note-input" id="note-${item.id}" rows="2" placeholder="Add a note…">${item.note || ''}</textarea>` : ''}
         ${item.status === 'out' && !showPriceRow ? `<button type="button" class="buy-btn" data-act="buy">✓ Bought it</button>` : ''}
         ${showPriceRow ? `
           <div class="price-row">
@@ -1052,6 +1107,20 @@ function render(){
         render();
         await saveItems();
         showToast('Removed ' + item.name);
+      });
+      el.querySelector('[data-act="note"]').addEventListener('click', async (e)=>{
+        e.stopPropagation();
+        if(noteEntryId === item.id){
+          const ta = document.getElementById(`note-${item.id}`);
+          item.note = ta.value.trim();
+          noteEntryId = null;
+          render();
+          await saveItems();
+        } else {
+          noteEntryId = item.id;
+          render();
+          document.getElementById(`note-${item.id}`)?.focus();
+        }
       });
       const step = item.unit === 'kg' ? 0.5 : 1;
       el.querySelector('[data-act="dec"]').addEventListener('click', async (e)=>{
