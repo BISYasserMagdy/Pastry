@@ -1231,7 +1231,7 @@ function renderTicket(){
     return;
   }
   body.innerHTML = `<div class="ticket-list">${needed.map(i=>
-    `<span class="ticket-chip">${i.name} · ${fmtCount(i.restockQty || (i.unit==='kg'?0.5:1))} ${i.unit}</span>`
+    `<span class="ticket-chip">${i.name} · ${fmtCount(i.restockQty || (i.unit==='kg'?0.5:1))} ${i.unit}${i.note ? ` — ${i.note}` : ''}</span>`
   ).join('')}</div>`;
 }
 
