@@ -1004,13 +1004,20 @@ async function loadItems(){
 function migrateItem(item){
   const fallback = DEFAULT_ITEMS.find(d=>d.id===item.id);
   const unit = item.unit || fallback?.unit || 'pcs';
+  const genericStep = unit === 'kg' ? 0.5 : 1;
   let count = item.count;
   if(typeof count !== 'number' || isNaN(count)){
     count = fallback?.count ?? 1;
   }
   let restockQty = item.restockQty;
   if(typeof restockQty !== 'number' || isNaN(restockQty) || restockQty <= 0){
-    restockQty = fallback?.restockQty ?? (count > 0 ? count : (unit === 'kg' ? 0.5 : 1));
+    restockQty = fallback?.restockQty ?? (count > 0 ? count : genericStep);
+  }
+  // recover items that were reset to the generic step by the old "bought it" bug
+  if(fallback && fallback.restockQty && fallback.restockQty !== genericStep &&
+     restockQty === genericStep && count === genericStep){
+    restockQty = fallback.restockQty;
+    count = fallback.count;
   }
   const status = item.status === 'low' ? 'out' : (item.status || 'full');
   const note = item.note || '';
@@ -1169,8 +1176,7 @@ function render(){
           const price = raw === '' ? null : parseFloat(raw);
           priceEntryId = null;
           item.status = 'full';
-          if(item.count === 0) item.count = step;
-          item.restockQty = item.count;
+          if(item.count === 0) item.count = item.restockQty || step;
           await saveItems();
           checkAndNotify();
           await awardXp(item, price);
@@ -1182,8 +1188,7 @@ function render(){
           e.stopPropagation();
           priceEntryId = null;
           item.status = 'full';
-          if(item.count === 0) item.count = step;
-          item.restockQty = item.count;
+          if(item.count === 0) item.count = item.restockQty || step;
           await saveItems();
           checkAndNotify();
           await awardXp(item, null);
